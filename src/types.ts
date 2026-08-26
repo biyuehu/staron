@@ -5,8 +5,11 @@ interface GateTarget {
   readonly repo: string
 }
 
+export type FailReason = 'not_authenticated' | 'not_starred'
+
 export interface FailContext extends GateTarget {
   readonly login: Option<string>
+  readonly reason: FailReason
 }
 
 export interface SuccessContext extends GateTarget {
@@ -47,4 +50,9 @@ export interface DeviceCodeResponse {
   readonly interval: number
 }
 
-export type GateResult = Result<SuccessContext, string>
+export interface GateFailure {
+  readonly reason: FailReason
+  readonly message: string
+}
+
+export type GateResult = Result<SuccessContext, GateFailure>
