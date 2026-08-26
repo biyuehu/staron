@@ -62,4 +62,4 @@ export const gate = async (options: StaronOptions): Promise<void> => {
   })
 }
 
-export type { Block, FailAction, FailContext, Fn, StaronOptions, SuccessContext, Warn } from './types'
+export { Block, type FailAction, type FailContext, Fn, type StaronOptions, type SuccessContext, Warn } from './types'

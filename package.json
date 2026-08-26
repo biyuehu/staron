@@ -1,7 +1,7 @@
 {
   "name": "staron",
   "description": "A tiny, functional GitHub star gate for CLI tools. Ask users to authenticate via GitHub Device Flow, check whether they starred your repo, and cache the result — with zero required scopes and a configurable fallback when they haven't starred",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "ArimuraSena <i@arimuraromi.com>",
   "license": "GPL-3.0-only",
   "type": "module",
