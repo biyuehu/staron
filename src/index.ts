@@ -1,8 +1,8 @@
 import { Err, None, Ok, Some } from 'ts-results'
 import { defaultCachePath, isCacheFresh, readCache, writeCache } from './cache'
 import { checkStar, fetchLogin, pollForToken, requestDeviceCode } from './github'
-import { Block } from './types'
 import type { FailContext, GateResult, StaronOptions, SuccessContext } from './types'
+import { Block } from './types'
 
 const runFailAction = async (options: StaronOptions, ctx: FailContext): Promise<void> => {
   const action = options.onFail ?? Block()
@@ -62,4 +62,4 @@ export const gate = async (options: StaronOptions): Promise<void> => {
   })
 }
 
-export type { FailAction, FailContext, StaronOptions, SuccessContext } from './types'
+export type { Block, FailAction, FailContext, Fn, StaronOptions, SuccessContext, Warn } from './types'
