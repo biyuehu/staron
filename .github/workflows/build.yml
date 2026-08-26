@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.ts"
+      - "**.json"
+      - "**.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.ts"
+      - "**.json"
+      - "**.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --no-verify
+
+      - name: Check formatting
+        run: bun fix
+
+      - name: Test
+        run: bun test
+
+      - name: Build
+        run: bun run build

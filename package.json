@@ -1,0 +1,47 @@
+{
+  "name": "staron",
+  "description": "A tiny, functional GitHub star gate for CLI tools. Ask users to authenticate via GitHub Device Flow, check whether they starred your repo, and cache the result — with zero required scopes and a configurable fallback when they haven't starred",
+  "version": "1.0.0",
+  "author": "ArimuraSena <i@arimuraromi.com>",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "init": "bunx lefthook install",
+    "fix": "biome check --write",
+    "build": "tsc"
+  },
+  "keywords": [
+    "bun",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biyuehu/staron.git"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.1.1",
+    "lefthook": "^2.1.10",
+    "vitest": "^4.1.10",
+    "@biomejs/biome": "2.4.13"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "ts-results": "^3.3.0",
+    "tslib": "^2.8.1"
+  }
+}
