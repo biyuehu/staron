@@ -10,7 +10,9 @@ export const requestDeviceCode = async (clientId: string): Promise<Result<Device
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ client_id: clientId })
   })
-  return res.ok ? Ok((await res.json()) as DeviceCodeResponse) : Err(`device code request failed: ${res.status}`)
+  if (res.ok) return Ok((await res.json()) as DeviceCodeResponse)
+  const body = await res.text()
+  return Err(`device code request failed: ${res.status} ${body}`)
 }
 
 const requestToken = async (clientId: string, deviceCode: string): Promise<Result<string, string>> => {

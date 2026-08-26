@@ -4,7 +4,8 @@ import { dirname, join } from 'node:path'
 import { Err, Ok, type Result } from 'ts-results'
 import type { CacheData } from './types'
 
-export const defaultCachePath = (repo: string): string => join(homedir(), '.config', 'staron', `${repo}.json`)
+export const defaultCachePath = (owner: string, repo: string): string =>
+  join(homedir(), '.config', 'staron', `${owner}-${repo}.json`)
 
 export const readCache = (path: string): Result<CacheData, string> => {
   if (!existsSync(path)) return Err('cache not found')

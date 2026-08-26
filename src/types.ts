@@ -33,6 +33,7 @@ export interface StaronOptions extends GateTarget {
   readonly onSuccess?: (ctx: SuccessContext) => void | Promise<void>
   readonly cacheExpireDays?: number
   readonly cacheFilePath?: string
+  readonly skipStarForOwner?: boolean
 }
 
 export interface CacheData {
