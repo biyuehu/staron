@@ -5,11 +5,11 @@
     "": {
       "name": "staron",
       "dependencies": {
-        "@biomejs/biome": "2.4.13",
         "ts-results": "^3.3.0",
         "tslib": "^2.8.1",
       },
       "devDependencies": {
+        "@biomejs/biome": "2.4.13",
         "@types/bun": "latest",
         "@types/node": "^26.1.1",
         "lefthook": "^2.1.10",

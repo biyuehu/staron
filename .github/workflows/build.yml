@@ -3,16 +3,13 @@ name: Build
 on:
   push:
     branches: [main]
-    paths:
-      - "**.ts"
-      - "**.json"
-      - "**.yml"
+    paths: &paths
+      - '**.ts'
+      - '**.json'
+      - '**.yml'
   pull_request:
     branches: [main]
-    paths:
-      - "**.ts"
-      - "**.json"
-      - "**.yml"
+    paths: *paths
 
 jobs:
   build:
@@ -23,7 +20,7 @@ jobs:
       - run: bun install --no-verify
 
       - name: Check formatting
-        run: bun fix
+        run: bun fix && git diff --exit-code
 
       - name: Test
         run: bun test
