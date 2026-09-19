@@ -21,21 +21,23 @@ const authFailure = (message: string): GateFailure => ({ reason: 'not_authentica
 
 const maxAuthRetries = 3
 
-const authenticate = async (options: StaronOptions, attempt = 0): Promise<GateResult> => {
+const authenticate = async (options: StaronOptions, why: string, attempt = 0): Promise<GateResult> => {
+  if (attempt === 0) console.log(`GitHub login required: ${why}`)
   const deviceRes = await requestDeviceCode(options.clientId)
   if (deviceRes.err)
-    return attempt < maxAuthRetries ? authenticate(options, attempt + 1) : Err(authFailure(deviceRes.val))
+    return attempt < maxAuthRetries ? authenticate(options, why, attempt + 1) : Err(authFailure(deviceRes.val))
   const { device_code, user_code, verification_uri, expires_in, interval } = deviceRes.val
   console.log(`Please visit ${verification_uri} and enter code: ${user_code}`)
   const tokenRes = await pollForToken(options.clientId, device_code, interval, Date.now() + expires_in * 1000)
   if (tokenRes.err)
-    return attempt < maxAuthRetries ? authenticate(options, attempt + 1) : Err(authFailure(tokenRes.val))
+    return attempt < maxAuthRetries ? authenticate(options, why, attempt + 1) : Err(authFailure(tokenRes.val))
   const loginRes = await fetchLogin(tokenRes.val)
   if (loginRes.err)
-    return attempt < maxAuthRetries ? authenticate(options, attempt + 1) : Err(authFailure(loginRes.val))
+    return attempt < maxAuthRetries ? authenticate(options, why, attempt + 1) : Err(authFailure(loginRes.val))
   const skipStar = options.skipStarForOwner === true && loginRes.val === options.owner
   const starRes = skipStar ? Ok(true) : await checkStar(tokenRes.val, options.owner, options.repo)
-  if (starRes.err) return attempt < maxAuthRetries ? authenticate(options, attempt + 1) : Err(authFailure(starRes.val))
+  if (starRes.err)
+    return attempt < maxAuthRetries ? authenticate(options, why, attempt + 1) : Err(authFailure(starRes.val))
   const cachePath = options.cacheFilePath ?? defaultCachePath(options.owner, options.repo)
   writeCache(cachePath, { login: loginRes.val, token: tokenRes.val, starred: starRes.val, checkedAt: Date.now() })
   return starRes.val
@@ -55,7 +57,13 @@ export const gate = async (options: StaronOptions): Promise<void> => {
         ? await (async () => {
             const skipStar = options.skipStarForOwner === true && cacheRes.val.login === options.owner
             const starRes = skipStar ? Ok(true) : await checkStar(cacheRes.val.token, options.owner, options.repo)
-            if (starRes.err) return authenticate(options)
+            if (starRes.err) {
+              const expired = !isCacheFresh(cacheRes.val.checkedAt, expireDays)
+              return authenticate(
+                options,
+                `${expired ? 'cache expired' : 'not starred cache recheck'}, saved token check failed (${starRes.val})`
+              )
+            }
             writeCache(cachePath, { ...cacheRes.val, starred: starRes.val, checkedAt: Date.now() })
             return starRes.val
               ? Ok<SuccessContext>({
@@ -66,7 +74,10 @@ export const gate = async (options: StaronOptions): Promise<void> => {
                 })
               : Err({ reason: 'not_starred', message: 'user has not starred the repository' })
           })()
-        : await authenticate(options)
+        : await authenticate(
+            options,
+            cacheRes.val === 'cache not found' ? 'first use, no saved token' : `saved token unusable (${cacheRes.val})`
+          )
 
   if (result.ok) return await options.onSuccess?.(result.val)
   await runFailAction(

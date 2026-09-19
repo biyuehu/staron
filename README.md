@@ -39,7 +39,7 @@ await gate({
 1. On first run, StarOn requests a device code and prompts the user to visit `github.com/login/device` and enter it.
 2. Once authorized, it fetches the user's login and checks `GET /user/starred/{owner}/{repo}` — no scopes required.
 3. The result is cached locally (`~/.config/staron/<repo>.json`, `0600` permissions).
-4. On subsequent runs, the cache is trusted until it expires (default 7 days) or the token turns out to be invalid, in which case StarOn re-validates or re-authenticates automatically.
+4. On subsequent runs, the cache is trusted until it expires (default 3 days). After that, StarOn first re-checks the star status with the saved token; only if the token is rejected (or missing/corrupted) does it re-authenticate, and it prints the reason before doing so.
 
 ## API
 
@@ -52,8 +52,9 @@ await gate({
 | `repo` | `string` | Repository name. |
 | `onFail` | `FailAction` | What to do when the user hasn't starred. Defaults to `Block()`. |
 | `onSuccess` | `(ctx: SuccessContext) => void \| Promise<void>` | Optional callback run when the check passes. |
-| `cacheExpireDays` | `number` | Days before a cached star status is re-checked. Defaults to `7`. |
+| `cacheExpireDays` | `number` | Days before a cached star status is re-checked. Defaults to `3`. |
 | `cacheFilePath` | `string` | Override the default cache location. |
+| `skipStarForOwner` | `boolean` | Skip the star check when the authenticated user is `owner`. Defaults to `false`. |
 
 ### `FailAction` constructors
 
@@ -73,4 +74,4 @@ Fn((ctx) => { /* ... */ })    // fully custom handling
 
 ## License
 
-GPL-3.0-only
+Under the GNU General Public License Version 3 (GPL-3.0). See the `LICENSE` file for details.
