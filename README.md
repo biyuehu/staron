@@ -1,4 +1,4 @@
-# StarOn  [![CI](https://github.com/biyuehu/staron/actions/workflows/build.yml/badge.svg)](https://github.com/biyuehu/staron/actions/workflows/build.yml) [![npm version](https://img.shields.io/npm/v/staron.svg)](https://www.npmjs.com/package/staron) [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://opensource.org/licenses/GPL-3.0) [![Bun](https://img.shields.io/badge/Bun-1.x-000000?logo=bun&logoColor=white)](https://bun.sh)
+# StarOn  [![CI](https://github.com/biyuehu/staron/actions/workflows/build.yml/badge.svg)](https://github.com/biyuehu/staron/actions/workflows/build.yml) [![npm version](https://img.shields.io/npm/v/staron.svg)](https://www.npmjs.com/package/staron) [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://opensource.org/licenses/GPL-3.0) [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org) [![Bun](https://img.shields.io/badge/Bun-1.x-000000?logo=bun&logoColor=white)](https://bun.sh)
 
 A tiny, functional GitHub star gate for CLI tools. Ask users to authenticate via GitHub Device Flow, check whether they starred your repo, and cache the result — with zero required scopes and a configurable fallback when they haven't starred.
 
@@ -21,7 +21,11 @@ yarn add staron
 ## Usage
 
 ```ts
+// ESM
 import { gate, Block } from 'staron'
+
+// Or CommonJS
+const { gate, Block } = require('staron')
 
 await gate({
   clientId: 'your-github-oauth-app-client-id',

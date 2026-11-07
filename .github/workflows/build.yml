@@ -27,3 +27,10 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Verify Node and Bun compatibility
+        run: |
+          node --input-type=module -e "import { gate } from './dist/index.js'; console.log('Node ESM ok')"
+          node -e "const { gate } = require('./dist/index.cjs'); console.log('Node CJS ok')"
+          bun -e "import { gate } from './dist/index.js'; console.log('Bun ESM ok')"
+          bun -e "const { gate } = require('./dist/index.cjs'); console.log('Bun CJS ok')"
