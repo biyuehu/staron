@@ -7,6 +7,8 @@ on:
       - '**.ts'
       - '**.json'
       - '**.yml'
+      - '**.rs'
+      - '**.toml'
   pull_request:
     branches: [main]
     paths: *paths
@@ -24,6 +26,9 @@ jobs:
 
       - name: Test
         run: bun test
+
+      - name: Rust Test
+        run: cargo test
 
       - name: Build
         run: bun run build
