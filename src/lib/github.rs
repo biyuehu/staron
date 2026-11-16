@@ -13,6 +13,7 @@ fn client() -> reqwest::Client {
     .unwrap_or_default()
 }
 
+/// Requests a device verification code from GitHub OAuth Device Authorization endpoint.
 pub async fn request_device_code(client_id: &str) -> Result<DeviceCodeResponse, String> {
   let res = client()
     .post(DEVICE_CODE_URL)
@@ -65,6 +66,7 @@ async fn request_token(client_id: &str, device_code: &str) -> Result<String, Str
     .ok_or_else(|| data.error.unwrap_or_else(|| "unknown error".to_string()))
 }
 
+/// Polls GitHub OAuth token endpoint until the user grants access or the code expires.
 pub async fn poll_for_token(
   client_id: &str,
   device_code: &str,
@@ -96,6 +98,7 @@ struct UserResponse {
   login: String,
 }
 
+/// Fetches the authenticated user's login handle from GitHub REST API.
 pub async fn fetch_login(token: &str) -> Result<String, String> {
   let res = client()
     .get("https://api.github.com/user")
@@ -115,6 +118,7 @@ pub async fn fetch_login(token: &str) -> Result<String, String> {
   }
 }
 
+/// Checks whether the user corresponding to the token has starred the specified repository.
 pub async fn check_star(token: &str, owner: &str, repo: &str) -> Result<bool, String> {
   let res = client()
     .get(format!(

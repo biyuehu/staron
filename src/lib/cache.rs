@@ -2,6 +2,7 @@ use super::types::CacheData;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+/// Computes the default cache file path (`~/.config/staron/<owner>-<repo>.json`).
 pub fn default_cache_path(owner: &str, repo: &str) -> PathBuf {
   dirs::home_dir()
     .unwrap_or_else(|| PathBuf::from("."))
@@ -10,6 +11,7 @@ pub fn default_cache_path(owner: &str, repo: &str) -> PathBuf {
     .join(format!("{owner}-{repo}.json"))
 }
 
+/// Reads and parses cached credentials and star status from disk.
 pub fn read_cache(path: &Path) -> Result<CacheData, String> {
   if !path.exists() {
     return Err("cache not found".to_string());
@@ -19,6 +21,7 @@ pub fn read_cache(path: &Path) -> Result<CacheData, String> {
     .and_then(|content| serde_json::from_str(&content).map_err(|_| "cache corrupted".to_string()))
 }
 
+/// Persists cache data to disk, setting restrictive permissions (0600) on Unix.
 pub fn write_cache(path: &Path, data: &CacheData) -> Result<(), String> {
   if let Some(parent) = path.parent() {
     fs::create_dir_all(parent).map_err(|_| "failed to write cache".to_string())?;
@@ -42,6 +45,7 @@ pub fn write_cache(path: &Path, data: &CacheData) -> Result<(), String> {
   }
 }
 
+/// Evaluates whether a cached verification timestamp remains within the freshness window.
 pub fn is_cache_fresh(checked_at: u64, expire_days: u64) -> bool {
   let now = std::time::SystemTime::now()
     .duration_since(std::time::UNIX_EPOCH)

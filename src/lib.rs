@@ -1,3 +1,8 @@
+//! Functional GitHub star gate for CLI tools.
+//!
+//! Provides GitHub OAuth Device Flow authentication and star verification
+//! with local token caching and customizable failure actions.
+
 mod lib {
   pub mod cache;
   pub mod github;
@@ -168,6 +173,19 @@ fn authenticate<'a>(
   })
 }
 
+/// Enforces a GitHub star verification gate.
+///
+/// Verifies whether the local user has starred the target repository. If a valid,
+/// unexpired cache entry is found, verification succeeds immediately without network
+/// requests. Otherwise, re-checks star status via the saved token or triggers an
+/// interactive OAuth Device Flow login.
+///
+/// # Side Effects
+/// - Reads from and writes to the local cache directory (`~/.config/staron/`).
+/// - Sends HTTP requests to GitHub OAuth and REST APIs.
+/// - Prompts interactive login steps to `stdout` when authentication is needed.
+/// - Invokes `on_success` callback on success, or executes `on_fail` action (which
+///   may terminate the process via `std::process::exit(1)`) on failure.
 pub async fn gate(options: StaronOptions) {
   let cache_path = options
     .cache_file_path
